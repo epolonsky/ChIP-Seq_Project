@@ -33,8 +33,9 @@ graph LR;
     E[Peak identification with MacS2]-->F[BED file creation];
     F[BED file creation]-->G[Output: Human readable genome browser];
 ```
+The workflow steps must be completed in this order as the output of one step is necessary as the input of the next step. Steps should not be hardcoded (other than the reference genome which is simple to swap out) as this pipeline must be able to analyze different ChIP-seq and ATAC-seq data than strictly what is provided in the paper.
 
-1. Obtain raw ChIP-Seq and ATAC-Seq data from the provided paper or from NCBI/PlasmoDB databases
+1. Obtain raw ChIP-Seq and ATAC-Seq data from the provided paper (or from NCBI/PlasmoDB databases)
 2. Quality trimming using trimmomatic  -> Use parameters SLIDINGWINDOW:4:30 MINLEN:35
 3. DNA alignment using BWA-MEM -> map trimmed reads to the reference genome (for this project P. falciparum 3D7)
 4. Quality filtering by Phred scores using Samtools  
