@@ -28,7 +28,7 @@ Our planned workflow is to follow the methods listed in the paper ***Chromatin S
 graph LR;
     A[Inputs: ChIP-seq and ATAC-seq fastq files]-->B[Quality filtering with Trimmomatic];
     B[Quality filtering with Trimmomatic]-->C[Read mapping to reference genome with BWA-MEM];
-    C[Read mapping to reference genome with BWA-MEM]-->C[Duplicate removal with Picard's MarkDuplicates];
+    C[Read mapping to reference genome with BWA-MEM]-->D[Duplicate removal with Picard's MarkDuplicates];
     D[Duplicate removal with Picard's MarkDuplicates]-->E[Peak identification with MacS2];
     E[Peak identification with MacS2]-->F[BED file creation];
     F[BED file creation]-->G[Output: Human readable genome browser];
