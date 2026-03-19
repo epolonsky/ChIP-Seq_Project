@@ -144,6 +144,7 @@ rule macs2:
         
         """
 #bam files must be binarized prior to chromatin state modeling
+#sorry I'm a bit confused by these 2 ChromHMM steps I will come back to them soon
 rule ChromHMM_binarize: #not sure if I need to specify memory with -mx4000M but google said I need it
 #in the paper they specified they used a bin size of 200bp but that is the default so I did not include that flag
     input:
