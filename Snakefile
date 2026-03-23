@@ -121,7 +121,7 @@ rule macs2:
         macs2 callpeak -t {input.bam} -f BAM -g 2e7 -q 0.001 --nomodel --shift 0 --extsize 200 -n {wildcards.sample} --outdir macs2_peaks
         """
 
-#overlay the BED files containing the filtered transcription factor binding sites onto the BED files containing the ChromHMM chromatin state locations to see where they intersect with pybedtools
+#overlay the BED files containing our BED output onto the BED files containing the paper-provided BED output to see where they intersect with pybedtools
 rule pybedtools:
     input:
 
