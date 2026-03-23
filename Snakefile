@@ -121,7 +121,7 @@ rule macs2:
         macs2 callpeak -t {input.bam} -f BAM -g 2e7 -q 0.001 --nomodel --shift 0 --extsize 200 -n {wildcards.sample} --outdir macs2_peaks
         """
 
-#filter out overlapping peaks to avoid overcounting
+#filter out overlapping peaks using bedtools intersect to avoid overcounting
 rule bedtools_intersect:
     input:
 
