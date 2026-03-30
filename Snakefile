@@ -214,12 +214,12 @@ rule macs2_pe:
 #filter out overlapping peaks using bedtools intersect to avoid overcounting
 rule bedtools_intersect:
     input:
-
+        "macs2_peaks/{sample}_peaks.narrowPeak"
     output:
 
     shell:
         """
-        bedtools intersect -a <> \ -b <>
+        bedtools intersect -v -a <> -b <> > unique_peaks.bed
         """
 #overlay the BED files containing our BED output onto the BED files containing the paper-provided BED output to see where they intersect with pybedtools jaccard
 rule pybedtools_jaccard:
