@@ -68,7 +68,7 @@ conda init bash
 
 Create and activate conda environment:
 ```bash
-conda create -n chipseq
+conda create -n chipseq -c bioconda -c conda-forge snakemake macs2 -y
 conda activate chipseq
 ```
 
