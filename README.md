@@ -44,6 +44,9 @@ http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.39.
 
 
 
-
-
+install conda using this command:
+```bash
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O ~/miniconda.sh
+bash ~/miniconda.sh -b -p $HOME/miniconda
+```
 
