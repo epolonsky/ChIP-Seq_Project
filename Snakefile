@@ -218,6 +218,7 @@ rule macs3_pe:
         """
 
 #convert paired end BED files to bigBed format to be more compatible with UCSC genome browser
+#not totally sure this is correct but I tried following the steps from the UCSC website https://genome.ucsc.edu/goldenpath/help/bigBed.html
 rule bed_to_bigbed_pe:
     input:
         "macs3_peaks/pe/{sample}_peaks.narrowPeak"
@@ -225,12 +226,19 @@ rule bed_to_bigbed_pe:
         "bigbed/pe/{sample}.bb"
     shell:
         """
-        bedToBigBed -type=bed6+4 -as=narrowPeak.as -tab sorted.narrowPeak chrom.sizes output.bb
+        sort -k1,1 -k2,2n input.narrowPeak > sorted.narrowPeak | bedToBigBed -type=bed6+4 -as=narrowPeak.as -tab sorted.narrowPeak chrom.sizes output.bb
         """
 
 #convert single end BED files to bigBed format
 rule bed_to_bigbed_se:
     input:
+        "macs3_peaks/se/{sample}_peaks.narrowPeak"
+    output:
+        "bigbed/se/{sample}.bb"
+    shell:
+        """
+        sort -k1,1 -k2,2n input.narrowPeak > sorted.narrowPeak | bedToBigBed -type=bed6+4 -as=narrowPeak.as -tab sorted.narrowPeak chrom.sizes output.bb
+        """
 
 #overlay the BED files containing our BED output onto the BED files containing the paper-provided BED output to see where they intersect with pybedtools jaccard
 rule pybedtools_jaccard:
