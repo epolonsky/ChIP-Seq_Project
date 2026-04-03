@@ -217,6 +217,21 @@ rule macs3_pe:
         macs3 callpeak -t {input.bam} -f BAM -g 2e7 -q 0.001 --nomodel --shift 0 --extsize 200 -n {wildcards.sample} --outdir macs3_peaks/pe
         """
 
+#convert paired end BED files to bigBed format to be more compatible with UCSC genome browser
+rule bed_to_bigbed_pe:
+    input:
+        "macs3_peaks/pe/{sample}_peaks.narrowPeak"
+    output:
+        "bigbed/pe/{sample}.bb"
+    shell:
+        """
+        bedToBigBed -type=bed6+4 -as=narrowPeak.as -tab sorted.narrowPeak chrom.sizes output.bb
+        """
+
+#convert single end BED files to bigBed format
+rule bed_to_bigbed_se:
+    input:
+
 #overlay the BED files containing our BED output onto the BED files containing the paper-provided BED output to see where they intersect with pybedtools jaccard
 rule pybedtools_jaccard:
     input:
