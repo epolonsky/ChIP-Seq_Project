@@ -216,6 +216,15 @@ rule macs3_pe:
         mkdir -p macs3_peaks/pe
         macs3 callpeak -t {input.bam} -f BAM -g 2e7 -q 0.001 --nomodel --shift 0 --extsize 200 -n {wildcards.sample} --outdir macs3_peaks/pe
         """
+#create the chromosome length file to be used in bedtobigbed
+#not 100% sure I did this correct
+rule chrom_sizes:
+    input:
+        genome="ref/P_falciparum3D7.fa"
+    output:
+        "chromsizes.genome"
+    shell:
+        samtools faidx {input.genome} | cut -f1,2 P_falciparum3D7.fa.fai > chromsizes.genome
 
 #convert paired end BED files to bigBed format to be more compatible with UCSC genome browser
 #not totally sure this is correct but I tried following the steps from the UCSC website https://genome.ucsc.edu/goldenpath/help/bigBed.html
@@ -226,7 +235,7 @@ rule bed_to_bigbed_pe:
         "bigbed/pe/{sample}.bb"
     shell:
         """
-        sort -k1,1 -k2,2n input.narrowPeak > sorted.narrowPeak | bedToBigBed -type=bed6+4 -as=narrowPeak.as -tab sorted.narrowPeak chrom.sizes output.bb
+        sort -k1,1 -k2,2n input.narrowPeak > sorted.narrowPeak | bedToBigBed -type=bed6+4 -as=narrowPeak.as -tab sorted.narrowPeak chromsizes.genome output.bb
         """
 
 #convert single end BED files to bigBed format
@@ -237,7 +246,7 @@ rule bed_to_bigbed_se:
         "bigbed/se/{sample}.bb"
     shell:
         """
-        sort -k1,1 -k2,2n input.narrowPeak > sorted.narrowPeak | bedToBigBed -type=bed6+4 -as=narrowPeak.as -tab sorted.narrowPeak chrom.sizes output.bb
+        sort -k1,1 -k2,2n input.narrowPeak > sorted.narrowPeak | bedToBigBed -type=bed6+4 -as=narrowPeak.as -tab sorted.narrowPeak chromsizes.genome output.bb
         """
 
 #overlay the BED files containing our BED output onto the BED files containing the paper-provided BED output to see where they intersect with pybedtools jaccard
