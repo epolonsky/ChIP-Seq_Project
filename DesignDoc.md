@@ -29,8 +29,8 @@ graph LR;
     A[Inputs: ChIP-seq and ATAC-seq fastq files]-->B[Quality filtering with Trimmomatic];
     B[Quality filtering with Trimmomatic]-->C[Read mapping to reference genome with BWA-MEM];
     C[Read mapping to reference genome with BWA-MEM]-->D[Duplicate removal with Picard's MarkDuplicates];
-    D[Duplicate removal with Picard's MarkDuplicates]-->E[Peak identification with MacS2];
-    E[Peak identification with MacS2]-->F[BED file creation];
+    D[Duplicate removal with Picard's MarkDuplicates]-->E[Peak identification with MacS3];
+    E[Peak identification with MacS3]-->F[BED file creation];
     F[BED file creation]-->G[Output: Human readable genome browser];
 ```
 The workflow steps must be completed in this order as the output of one step is necessary as the input of the next step. Steps should not be hardcoded (other than the reference genome which is simple to swap out) as this pipeline must also be able to analyze ChIP-seq and ATAC-seq data other than what is provided in the paper.
@@ -40,12 +40,9 @@ The workflow steps must be completed in this order as the output of one step is 
 3. DNA alignment using BWA-MEM -> map trimmed reads to the reference genome (for this project P. falciparum 3D7)
 4. Quality filtering by Phred scores using Samtools  
 5. Remove duplicates using Picard's MarkDuplicates 
-6. Peak calling using MacS2 (BED file)  
-7. Remove duplicate peeks using bedtools  
-8. Map the location of chromatin regulatory states across the genome using ChromHMM (BED file)  
-9. Use pybedtools to overlay the BED files containing the filtered transcription factor binding sites onto the BED files containing the ChromHMM chromatin state locations to see where they intersect  
-10. View the generated BED files using UCSC Genome Browser
-11. We will compare the similarity between the generated BED files and the BED files provided by the paper using BEDtools jaccard function.
+6. Peak calling using MacS3 (BED file)  
+7. View the generated BED files using UCSC Genome Browser
+8. We will compare the similarity between the generated BED files and the BED files provided by the paper using BEDtools jaccard function.
 
 Once our pipeline is functional, and our output matches that of the paper, we will use the results to identify candidate regulators for 1-Cys Prx. However, the ChIP-seq data used in the paper is from blood stage parasites, when 1-Cys Prx is not highly upregulated, so we will likely need to use other ChIP-seq data for *Plasmodium* from NCBI or PlasmoDB in order to accomplish this goal.
 
@@ -56,7 +53,7 @@ Once our pipeline is functional, and our output matches that of the paper, we wi
 | March 16th | Initial Presentation, Design Document | PPT \-  Introduction | PPT \- Workflow and Cleaning of powerpoint | PPT \- some of intro and milestones Document \- overview, context, project goals, and proposed solutions |
 | March 23rd | Repo Check \#1   | Input Code, Trimmomatic  | BWA-MEM | Input Code, Trimmomatic  |
 | March 30th | Progress Presentation  | Progress Presentation | Quality filtering and duplicate removal | Quality filtering and duplicate removal |
-| April 6th | Repo Check \#2   | BEDtools Intersect | MacS2 | MacS2 |
+| April 6th | Repo Check \#2   | BEDtools Intersect | MacS3 | MacS3 |
 | April 13th | Rough Draft Application Note | Application note | Generate BED files and compare to paper | Connect .bb Code |
 | April 20th | Progress Presentation Repo Check \#3 | Identify candidate regulators for 1-Cys Prx | Connect to Viewer | Connect to Viewer, Progress Presentation |
 | May 1st 4:00 pm | Final Presentation Final Project code Final Application Note | Final Presentation | Final Presentation | Application note |

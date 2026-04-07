@@ -9,12 +9,12 @@ configfile: 'CompProjectconfig.yaml' #snakemake will pull info from this file
 single_samples = config["Single End"] #this algins with the formatting of the YAML for SINGLE END READS
 paired_samples = config["Paired End"] #this aligns with teh formatting of the YAML for PARIED END READS
 samples = config["SRAs"] #all of the samples are going to come in the form of an SRA
-reference_genome = config["Refrence Genome"]
+reference_genome = config["Reference Genome"]
 
 rule all:
     input:   
-        expand("macs2_peaks/se/{sample}_peaks.narrowPeak", sample=single_samples) +
-        expand("macs2_peaks/pe/{sample}_peaks.narrowPeak", sample=paired_samples)
+        expand("macs3_peaks/se/{sample}_peaks.narrowPeak", sample=single_samples) +
+        expand("macs3_peaks/pe/{sample}_peaks.narrowPeak", sample=paired_samples)
 
 #get paired end fastq files from the sra accessions  
 rule fasterq_dump:    
@@ -193,45 +193,69 @@ rule remove_duplicates_pe:
         java -jar picard.jar MarkDuplicates I={input} O={output} REMOVE_DUPLICATES=true VALIDATION_STRINGENCY=STRICT M=mapped_reads/pe/{wildcards.sample}.dup_metrics.txt
         """
 
-#call peaks using MacS2 for SE. Need to input a control I think but idk what it is
-rule macs2_se:
+#call peaks using MacS3 for SE. Need to input a control I think but idk what it is
+rule macs3_se:
     input: 
         bam="mapped_reads/se/{sample}.noduplicates.bam"
     output: 
-        "macs2_peaks/se/{sample}_peaks.narrowPeak"
+        "macs3_peaks/se/{sample}_peaks.narrowPeak"
     shell: 
         """
-        mkdir -p macs2_peaks/se
-        macs2 callpeak -t {input.bam} -f BAM -g 2e7 -q 0.001 --nomodel --shift 0 --extsize 200 -n {wildcards.sample} --outdir macs2_peaks/se
+        mkdir -p macs3_peaks/se
+        macs3 callpeak -t {input.bam} -f BAM -g 2e7 -q 0.001 --nomodel --shift 0 --extsize 200 -n {wildcards.sample} --outdir macs3_peaks/se
         """
 
-#call peaks using MacS2 for PE. Need to input a control I think but idk what it is
-rule macs2_pe:
+#call peaks using MacS3 for PE. Need to input a control I think but idk what it is
+rule macs3_pe:
     input: 
         bam="mapped_reads/pe/{sample}.noduplicates.bam"
     output: 
-        "macs2_peaks/pe/{sample}_peaks.narrowPeak"
+        "macs3_peaks/pe/{sample}_peaks.narrowPeak"
     shell: 
         """
-        mkdir -p macs2_peaks/pe
-        macs2 callpeak -t {input.bam} -f BAM -g 2e7 -q 0.001 --nomodel --shift 0 --extsize 200 -n {wildcards.sample} --outdir macs2_peaks/pe
+        mkdir -p macs3_peaks/pe
+        macs3 callpeak -t {input.bam} -f BAM -g 2e7 -q 0.001 --nomodel --shift 0 --extsize 200 -n {wildcards.sample} --outdir macs3_peaks/pe
         """
-
-#filter out overlapping peaks using bedtools intersect to avoid overcounting
-rule bedtools_intersect:
+#create the chromosome length file to be used in bedtobigbed
+#not 100% sure I did this correct
+rule chrom_sizes:
     input:
-
+        genome="ref/P_falciparum3D7.fa"
     output:
-
+        "chromsizes.genome"
     shell:
         """
-        bedtools intersect -a <> \ -b <>
+        samtools faidx {input.genome} | cut -f1,2 {input.genome}.fai > chromsizes.genome
         """
+
+#convert paired end BED files to bigBed format to be more compatible with UCSC genome browser
+#not totally sure this is correct but I tried following the steps from the UCSC website https://genome.ucsc.edu/goldenpath/help/bigBed.html
+rule bed_to_bigbed_pe:
+    input:
+        "macs3_peaks/pe/{sample}_peaks.narrowPeak"
+    output:
+        "bigbed/pe/{sample}.bb"
+    shell:
+        """
+        sort -k1,1 -k2,2n input.narrowPeak > sorted.narrowPeak | bedToBigBed -type=bed6+4 -as=narrowPeak.as -tab sorted.narrowPeak chromsizes.genome output.bb
+        """
+
+#convert single end BED files to bigBed format
+rule bed_to_bigbed_se:
+    input:
+        "macs3_peaks/se/{sample}_peaks.narrowPeak"
+    output:
+        "bigbed/se/{sample}.bb"
+    shell:
+        """
+        sort -k1,1 -k2,2n input.narrowPeak > sorted.narrowPeak | bedToBigBed -type=bed6+4 -as=narrowPeak.as -tab sorted.narrowPeak chromsizes.genome output.bb
+        """
+
 #overlay the BED files containing our BED output onto the BED files containing the paper-provided BED output to see where they intersect with pybedtools jaccard
 rule pybedtools_jaccard:
     input:
         provided_BED="provided_BED/{sample}.bed",
-        our_BED="macs2_peaks/{sample}_peaks.narrowPeak"
+        our_BED="macs3_peaks/{sample}_peaks.narrowPeak"
     output:
         "results.jaccard"
     shell:
@@ -248,6 +272,6 @@ rule cleanup:
         rm -rf ncbi_dataset ncbi_dataset.zip
         rm -rf ref
         rm -rf data/fastq
-        rm -rf trimmed mapped_reads macs2_peaks
+        rm -rf trimmed mapped_reads macs3_peaks
         rm -rf .snakemake
         """
