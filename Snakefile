@@ -21,12 +21,12 @@ rule fasterq_dump:
     input:
         "initial_data/{sample}/{sample}.sra" #this is the formatting of the folder made by SampleDownloadPFal.py 
     output:
-        "data/fastq/{sample}_1.fastq", # -1 signifies the forward reads
-        "data/fastq/{sample}_2.fastq" # -2 signifies the reverse reads 
+        "data/fastq/pe/{sample}_1.fastq", # -1 signifies the forward reads
+        "data/fastq/pe/{sample}_2.fastq" # -2 signifies the reverse reads 
     shell:
         """
-        mkdir -p data/fastq
-        fasterq-dump {input} -O data/fastq --split-files
+        mkdir -p data/fastq/pe
+        fasterq-dump {input} -O data/fastq/pe --split-files
         """
         
 #get single end fastq files from sra accessions
@@ -34,11 +34,11 @@ rule fasterq_dump_single:
     input:
         "initial_data/{sample}/{sample}.sra" #this is the formatting of the folder made by SampleDownloadPFal.py 
     output:
-        "data/fastq/{sample}.fastq"
+        "data/fastq/se/{sample}.fastq"
     shell:
         """
-        mkdir -p data/fastq
-        fasterq-dump {input} -O data/fastq
+        mkdir -p data/fastq/se
+        fasterq-dump {input} -O data/fastq/se
         """
 
 '''The sample fasterq-dump codes are designed to make file formatting similar between the single end and paired end'''
@@ -61,28 +61,28 @@ rule download_reference_genome:
 #filter single end reads by quality using Trimmomatic 
 rule trimmomatic_se:
     input:
-        "data/fastq/{sample}.fastq"
+        "data/fastq/se/{sample}.fastq"
     output:
-        "trimmed/{sample}.fastq"
+        "trimmed/se/{sample}.fastq"
     shell:
         """ 
-        mkdir -p trimmed 
+        mkdir -p trimmed/se 
         java -jar ~/chipseq_project/Trimmomatic-0.39/trimmomatic-0.39.jar SE -phred33 {input} {output} SLIDINGWINDOW:4:30 MINLEN:35
         """
 
 #filter paired end reads by quality using Trimmomatic 
 rule trimmomatic_pe:
     input:
-        r1="data/fastq/{sample}_1.fastq",
-        r2="data/fastq/{sample}_2.fastq"
+        r1="data/fastq/pe/{sample}_1.fastq",
+        r2="data/fastq/pe/{sample}_2.fastq"
     output:
-        r1_paired="trimmed/{sample}_1_paired.fastq",
-        r1_unpaired="trimmed/{sample}_1_unpaired.fastq",
-        r2_paired="trimmed/{sample}_2_paired.fastq",
-        r2_unpaired="trimmed/{sample}_2_unpaired.fastq"
+        r1_paired="trimmed/pe/{sample}_1_paired.fastq",
+        r1_unpaired="trimmed/pe/{sample}_1_unpaired.fastq",
+        r2_paired="trimmed/pe/{sample}_2_paired.fastq",
+        r2_unpaired="trimmed/pe/{sample}_2_unpaired.fastq"
     shell:
         """
-        mkdir -p trimmed 
+        mkdir -p trimmed/pe
         java -jar ~/chipseq_project/Trimmomatic-0.39/trimmomatic-0.39.jar PE -phred33 {input.r1} {input.r2} {output.r1_paired} {output.r1_unpaired} {output.r2_paired} {output.r2_unpaired} SLIDINGWINDOW:4:30 MINLEN:35
         """
 
@@ -102,7 +102,7 @@ rule index_ref:
 rule bwa_mapping_se: #use -M in command to make it compatible with Picard, and pipe command to samtools
     input:
         genome="ref/P_falciparum3D7.fa",
-        fastq="trimmed/{sample}.fastq",
+        fastq="trimmed/se/{sample}.fastq",
         donecheck="ref/index.done"
     output:
         "mapped_reads/se/{sample}.bam"
@@ -116,8 +116,8 @@ rule bwa_mapping_se: #use -M in command to make it compatible with Picard, and p
 rule bwa_mapping_pe:
     input:
         genome="ref/P_falciparum3D7.fa",
-        r1="trimmed/{sample}_1_paired.fastq",
-        r2="trimmed/{sample}_2_paired.fastq",
+        r1="trimmed/pe/{sample}_1_paired.fastq",
+        r2="trimmed/pe/{sample}_2_paired.fastq",
         idx="ref/index.done"
     output:
         "mapped_reads/pe/{sample}.bam"
@@ -216,6 +216,7 @@ rule macs3_pe:
         mkdir -p macs3_peaks/pe
         macs3 callpeak -t {input.bam} -f BAM -g 2e7 -q 0.001 --nomodel --shift 0 --extsize 200 -n {wildcards.sample} --outdir macs3_peaks/pe
         """
+
 #create the chromosome length file to be used in bedtobigbed
 #not 100% sure I did this correct
 rule chrom_sizes:
@@ -271,7 +272,10 @@ rule cleanup:
         """
         rm -rf ncbi_dataset ncbi_dataset.zip
         rm -rf ref
-        rm -rf data/fastq
-        rm -rf trimmed mapped_reads macs3_peaks
+        rm -rf data/fastq/se
+        rm -rf data/fastq/pe
+        rm -rf trimmed 
+        rm -rf mapped_reads 
+        rm -rf macs3_peaks
         rm -rf .snakemake
         """
