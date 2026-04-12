@@ -44,7 +44,7 @@ Must run with the conda Macs3 environment activated
 conda activate macs3_env
 ```
 ```bash
-nohup snakemake -s snakefile -c 4 --configfile CompProjectconfig.yaml > snakemake.log 2>&1 &
+nohup snakemake -s Snakefile -c 4 --configfile CompProjectconfig.yaml > snakemake.log 2>&1 &
 ```
 
 To run the Snakefile cleanup
