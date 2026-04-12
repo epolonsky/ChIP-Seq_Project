@@ -221,7 +221,7 @@ rule macs3_pe:
 #not 100% sure I did this correct
 rule chrom_sizes:
     input:
-        genome="ref/P_falciparum3D7.fa"
+        genome="{reference_genome}"
     output:
         "chromsizes.genome"
     shell:
