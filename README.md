@@ -23,7 +23,7 @@ This yaml connects to the sample download code to begin downloading the data you
 You should not need to make any edits to the SampleDownloadV2.py code itself, except for adding the reference genome if
 you plan to work with something other than Plasmodium falciparum
 
-For quick testing of the pipeline, we recommend using "SRR34020775" in "YourSamplesHere.yaml", as it is a very small sample file capable of running in ~2 minutes.
+For quick testing of the pipeline, we recommend using "SRR34020775" which is already listed in "YourSamplesHere.yaml", as it is a very small sample file capable of running in ~2 minutes.
 
 To install the yaml functionality, use the following command:
 ```bash
@@ -37,7 +37,7 @@ It will create a directory to store samples called
 The function will use the operating system to check for the directory. 
 Subproccess allows for the running of commandline tool from within Python. 
 To adapt the Sample Download code to other samples, the list at line 19 can be changed to other SRR/SRA numbers
-Please check that SampleDownloadV2.py is in your current working directory before using ./
+Please check that SampleDownload.py is in your current working directory before using ./
 Otherwise list full path
 Additionally, if you need to change the reference genome you wish to use, this is under the output dictionary 
 
