@@ -99,6 +99,11 @@ Install Macs3:
 conda install -c bioconda macs3
 ```
 
+Install bedtools to merge the bedfiles by timepoint: 
+```bash
+conda install -c bioconda bedtools
+```
+
 Install bedToBigBed:
 ```bash
 wget http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/bedToBigBed
