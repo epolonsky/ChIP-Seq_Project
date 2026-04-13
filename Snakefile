@@ -247,7 +247,7 @@ rule bed_to_bigbed_pe:
         sort -k1,1 -k2,2n {input.peaks} | \
         awk 'BEGIN{{OFS="\\t"}} {{if($5>1000) $5=1000; print}}' > {input.peaks}.sorted
         
-        bedToBigBed -type=bed6+4 -as=narrowPeak.as -tab {input.peaks}.sorted {input.sizes} {output.bb}
+        bedToBigBed -type=bed6+4 -as=bigNarrowPeak.as -tab {input.peaks}.sorted {input.sizes} {output.bb}
         
         rm {input.peaks}.sorted
         """
@@ -261,7 +261,7 @@ rule bed_to_bigbed_se:
         bb = "bigbed/se/{sample}.bb"
     shell:
         """
-        sort -k1,1 -k2,2n {input.peaks} > {input.peaks}.sorted | bedToBigBed -type=bed6+4 -as=narrowPeak.as -tab {input.peaks}.sorted {input.sizes} {output.bb}
+        sort -k1,1 -k2,2n {input.peaks} > {input.peaks}.sorted | bedToBigBed -type=bed6+4 -as=bigNarrowPeak.as -tab {input.peaks}.sorted {input.sizes} {output.bb}
         """
 
 #cleanup rule to remove files and run snakemake again
