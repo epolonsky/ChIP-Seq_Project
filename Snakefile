@@ -14,9 +14,7 @@ reference_genome = config["Reference Genome"]
 rule all:
     input:   
         expand("bigbed/pe/{sample}.bb", sample=paired_samples),
-        expand("bigbed/se/{sample}.bb", sample=single_samples),
-        expand("results/jaccard/pe/{sample}.jaccard", sample=paired_samples),
-        expand("results/jaccard/se/{sample}.jaccard", sample=single_samples)
+        expand("bigbed/se/{sample}.bb", sample=single_samples)
         
 
 #get paired end fastq files from the sra accessions  
