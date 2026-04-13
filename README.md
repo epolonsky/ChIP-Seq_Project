@@ -24,7 +24,7 @@ You should not need to make any edits to the SampleDownloadV2.py code itself, ex
 you plan to work with something other than Plasmodium falciparum
 
 SampleDownload.py:
-This Script is made to download the initial data to run through the pipeline and create the config file needed for the pipeline.
+This Script is made to download the initial data to run through the pipeline and create the config file needed for the pipeline. \n
 It will create a directory to store samples called 
 "initial_data"
 The function will use the operating system to check for the directory. 
