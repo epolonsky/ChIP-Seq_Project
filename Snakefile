@@ -264,19 +264,6 @@ rule bed_to_bigbed_se:
         sort -k1,1 -k2,2n {input.peaks} > {input.peaks}.sorted | bedToBigBed -type=bed6+4 -as=narrowPeak.as -tab {input.peaks}.sorted {input.sizes} {output.bb}
         """
 
-#overlay the BED files containing our BED output onto the BED files containing the paper-provided BED output to see where they intersect with pybedtools jaccard
-#I am working on this so this doesnt work yet
-rule pybedtools_jaccard:
-    input:
-        provided_BED = "provided_BED/{sample}.bed",
-        our_BED = "macs3_peaks/pe/{sample}_peaks.narrowPeak"
-    output:
-        "results/{sample}.jaccard" # The output now includes the wildcard
-    shell:
-        """
-        bedtools jaccard -a {input.provided_BED} -b {input.our_BED} > {output}
-        """
-
 #cleanup rule to remove files and run snakemake again
 rule cleanup:
     shell:
