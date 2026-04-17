@@ -1,6 +1,7 @@
-# Welcome to the "Cool Name for Pipeline Here" Github
+# Welcome to the "PlasmodiumPeakProcess" Github
 
-This Snakemake pipeline is intended to analyze ChIP-seq and ATAC-seq data for the species Plasmodium falciparum.
+This Snakemake pipeline is intended to analyze ChIP-seq and ATAC-seq data for the species *Plasmodium falciparum*.
+
 
 
 
@@ -155,7 +156,7 @@ YourSamplesHere.yaml
 
 This yaml connects to the sample download code to begin downloading the data you would like to use. 
 
-You should not need to make any edits to the SampleDownload.py code itself, except for adding the reference genome if you plan to work with something other than Plasmodium falciparum.
+You should not need to make any edits to the SampleDownload.py code itself, except for adding the reference genome if you plan to work with something other than *Plasmodium falciparum*.
 
 Add the **SRA IDs** you want to analyze.  
 An example format is already included in the file.
@@ -197,16 +198,22 @@ python ./SampleDownload.py
 ## Running the pipeline
 
 ### Activate Conda environment
-(if conda has not yet been installed, see directions at the end)
+
 
 ```bash
 conda activate macs3_env
 ```
 
+### Run Snakemake
+
+```bash
+snakemake -s Snakefile -c 4 --configfile CompProjectconfig.yaml
+```
+
 ### Run Snakemake (background mode)
 
 ```bash
-nohup snakemake -s Snakefile -c 4 --configfile CompProjectconfig.yaml > snakemake.log 2>&1 &
+nohup snakemake -s Snakefile -c 4 --configfile CompProjectconfig.yaml 
 ```
 
 ---
