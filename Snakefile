@@ -229,36 +229,28 @@ rule chrom_sizes:
         samtools faidx {input.genome}
         cut -f1,2 {input.genome}.fai > {output}
         """
-
-#convert paired end BED files to bigBed format to be more compatible with UCSC genome browser
-rule bed_to_bigbed_pe:
+#convert macs3 narrowpeak output into bedgraph files, to be converted into bigwig files
+rule bed_graph_pe:
     input:
-        peaks = "macs3_peaks/pe/{sample}_peaks.narrowPeak",
-        sizes = "chromsizes.genome"
+        "macs3_peaks/pe/{sample}_peaks.narrowPeak"
     output:
-        bb = "bigbed/pe/{sample}.bb"
+        "bedgraphs/pe/{sample}.bedGraph"
     shell:
-        """
-        mkdir -p bigbed/pe
-        # Sort and cap scores at 1000 for UCSC compatibility
-        sort -k1,1 -k2,2n {input.peaks} | \
-        awk 'BEGIN{{OFS="\\t"}} {{if($5>1000) $5=1000; print}}' > {sample}sorted.narrowPeak
-        
-        bedToBigBed -type=bed6+4 -as=bigNarrowPeak.as -tab {input.peaks}.sorted {input.sizes} {output.bb}
-        
-        rm {sample}sorted.narrowPeak
+        """ 
+        mkdir -p bedgraphs/pe
+        awk '{{print $1"\t"$2"\t"$3"\t"$7}}' {input} | sort -k1,1 -k2,2n > {sample}.bedGraph
         """
 
-#convert single end BED files to bigBed format
-rule bed_to_bigbed_se:
+#convert macs3 narrowpeak output into bedgraph files, to be converted into bigwig files
+rule bed_graph_se:
     input:
-        peaks = "macs3_peaks/se/{sample}_peaks.narrowPeak",
-        sizes = "chromsizes.genome"
+        "macs3_peaks/se/{sample}_peaks.narrowPeak"
     output:
-        bb = "bigbed/se/{sample}.bb"
+        "bedgraphs/se/{sample}.bedGraph"
     shell:
-        """
-        sort -k1,1 -k2,2n {input.peaks} > {sample}sorted.narrowPeak | bedToBigBed -type=bed6+4 -as=bigNarrowPeak.as -tab {input.peaks}.sorted {input.sizes} {output.bb}
+        """ 
+        mkdir -p bedgraphs/se
+        awk '{{print $1"\t"$2"\t"$3"\t"$7}}' {input} | sort -k1,1 -k2,2n > {sample}.bedGraph
         """
 
 #cleanup rule to remove files and run snakemake again
