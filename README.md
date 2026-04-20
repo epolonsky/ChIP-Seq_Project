@@ -87,8 +87,8 @@ Requires Java.
 java -jar trimmomatic-0.39.jar
 ```
 
-Please see the link below for further details and to download trimmomatic-0.39.jar:
-https://github.com/usadellab/Trimmomatic
+Please see the link below for further details and to download Trimmomatic-0.39.zip. Unzip the folder before running the pipeline:
+https://github.com/usadellab/Trimmomatic/releases
 
 ---
 
@@ -100,8 +100,8 @@ Requires Java.
 java -jar picard.jar
 ```
 
-Please see the link below for further details and to download:
-https://github.com/broadinstitute/picard/releases/download/3.4.0/picard.jar
+Please see the link below for further details and to download picard.jar:
+https://github.com/broadinstitute/picard/releases/download/3.4.0/picard.jar](https://github.com/broadinstitute/picard/releases/tag/3.4.0
 
 ---
 
