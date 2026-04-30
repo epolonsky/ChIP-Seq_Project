@@ -1,4 +1,4 @@
-# Welcome to the "PlasmodiumPeakProcess" Github
+# Welcome to the PlasmoPeak Pipeline Github
 
 This Snakemake pipeline is intended to analyze ChIP-seq and ATAC-seq data for the species *Plasmodium falciparum*.
 
@@ -48,6 +48,7 @@ git clone https://github.com/hcallachor/ChIP-Seq_Project
 ## Directions to Install Softwares
 
 ### Install Miniconda (Conda)
+This pipeline is designed to run with a conda environment that contains the softwares and tools needed. 
 
 install conda using this command:
 
@@ -66,72 +67,16 @@ conda init bash
 ```
 
 ---
-
-### Install OpenJDK from conda-forge
-This is a version of java you can obtain through conda
-
+# Create the environment from the provided YAML file
 ```bash
-conda install -c conda-forge openjdk
-
-# Verify installation
-java -version
+mamba env create -f envs/environment.yaml -n environment
+```
+### Note: If you add new tools to the YAML later, update the environment using:
+```bash
+mamba env update -n environment -f envs/environment.yaml
 ```
 
----
 
-### Trimmomatic
-
-Requires Java.
-
-```bash
-java -jar trimmomatic-0.39.jar
-```
-
-Please see the link below for further details and to download Trimmomatic-0.39.zip. Unzip the folder before running the pipeline:
-https://github.com/usadellab/Trimmomatic/releases
-
----
-
-### Picard MarkDuplicates
-
-Requires Java.
-
-```bash
-java -jar picard.jar
-```
-
-Please see the link below for further details and to download picard.jar: 
-https://github.com/broadinstitute/picard/releases/tag/3.4.0
-
----
-
-### Create environment and install macs3
-
-```bash
-conda create -n macs3_env python=3.9
-conda activate macs3_env
-conda install -c bioconda -c conda-forge macs3
-```
-
----
-
-### Create environment and install bedGraphToBigWig
-```bash
-conda install bioconda::ucsc-bedgraphtobigwig
-conda install -c bioconda -c conda-forge ucsc-bedgraphtobigwig openssl=1.0
-```
-After macs3 is run files need to be converted into bedGraph format and then bigwig format in order to be run through the UCSC genome browser. These files need to be hosted on a web server in order to be compatible with the UCSC Genome Browser. A convenient option is to upload the bigwig file to GitHub, then copy the raw file URL and paste it into the custom tracks function found under the "My Data" tab of the genome browser website.
-
----
-
-### Create a Python Environment for running this pipeline
-
-```bash
-conda create -n my_environment python=3.9 -y
-conda activate my_environment
-```
-
----
 
 ### Install PyYAML
 
@@ -153,7 +98,7 @@ YourSamplesHere.yaml
 
 This yaml connects to the sample download code to begin downloading the data you would like to use. 
 
-You should not need to make any edits to the SampleDownload.py code itself, except for adding the reference genome if you plan to work with something other than *Plasmodium falciparum*.
+You should not need to make any edits to the SampleDownload.py code itself, except for adding the reference genome if you plan to work with something other than *Plasmodium falciparum*. (ref genome as of May 2026)
 
 Add the **SRA IDs** you want to analyze.  
 An example format is already included in the file.
@@ -166,7 +111,7 @@ For quick testing of the pipeline, use:
 
 **SRR34020775**
 
-This dataset is very small and should run in ~2 minutes.
+This dataset is very small and should run in ~2 minutes if using 4 cores.
 
 ---
 
@@ -182,7 +127,7 @@ python ./SampleDownload.py
 - Creates a directory called **initial_data/**
 - Reads SRA IDs from `YourSamplesHere.yaml`
 - Downloads sequencing data using SRA tools
-- Generates the config file for Snakemake
+- Generates the config file for Snakemake and the PlasmoPeak file
 
 **Implementation notes:**
 - Uses Python `subprocess` to run command-line tools
@@ -197,20 +142,20 @@ python ./SampleDownload.py
 ### Run Snakemake
 
 ```bash
-snakemake -s Snakefile -c 4 --configfile CompProjectconfig.yaml
+snakemake -s PlasmoPeak -c 4 --configfile config.yaml --use-conda
 ```
 
 ### Run Snakemake (background mode)
 
 ```bash
-nohup snakemake -s Snakefile -c 4 --configfile CompProjectconfig.yaml 
+nohup snakemake -s PlasmoPeak -c 4 --configfile config.yaml --use-conda
 ```
 
 ---
 
 ### Run cleanup workflow
 ```bash
-snakemake cleanup -c 1 --configfile CompProjectconfig.yaml
+snakemake cleanup -c 1 --configfile config.yaml
 ```
 
 ---
@@ -227,12 +172,13 @@ snakemake --list
 - bigWig files can be viewed on the UCSC Genome Browser: https://genome.ucsc.edu/
 - bigWig files must be hosted on a web-accessible URL (such as on GitHub)
 
+
 ### Pushing to GitHub
 - First, create a repository on your GitHub account, and clone the repository following the instructions listed at the top of this README.
 - Move the bigWig output files to your own repository, and push them to GitHub using git add, commit, and push.
 
 ### Using the Genome Browser
-- Open your GitHub repository to the bigWig file, and right-click the "raw" button in the top right, in order to copy the raw data URL.
+- Open your GitHub repository to the bigWig file, and right-click the "raw" button in the top right, in order to copy the raw data URL. (this can also be accomplished by changing "blob" to "raw" in the URL)
 - Paste the URL in the "Custom Tracks" section found under "My Data", submit and select "Go To First Annotation".
 - Viewing settings must be manually configured by selecting the gear icon on the left side of your sample track.
 - Simply change the "dense" setting to "full" and submit changes, then the tracks will show peak data.
@@ -240,9 +186,12 @@ snakemake --list
 ---
 
 ## Notes
-
-- Java is required for Trimmomatic and Picard
-- Always activate the conda environment before running Snakemake
 - Ensure `YourSamplesHere.yaml` is properly formatted
 - Modify reference genome settings in `SampleDownload.py` if needed
+- We chose to set this up in a conda environment, but all of these tools could be downloaded and their calls changed within the pipeline to reflect the versions individually downloaded. 
+- You can rename the main pipeline file if you make changes, but will need to change the name within the snakemake calls
+
+```bash
+snakemake -s NewName -c 4 -config --configfile config.yaml --use-conda
+```
 
