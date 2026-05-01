@@ -179,7 +179,8 @@ snakemake --list
 
 ### Using the Genome Browser
 - Open your GitHub repository to the bigWig file, and right-click the "raw" button in the top right, in order to copy the raw data URL. (this can also be accomplished by changing "blob" to "raw" in the URL)
-- Paste the URL in the "Custom Tracks" section found under "My Data", submit and select "Go To First Annotation".
+- Under the "Genomes" tab on the browser website, search for your reference genome (in this case GCF_000002765.6), and select "go".
+- Next, paste the URL to your bigWig file in the "Custom Tracks" section found under "My Data", submit and select "Go To First Annotation".
 - Viewing settings must be manually configured by selecting the gear icon on the left side of your sample track.
 - Simply change the "dense" setting to "full" and submit changes, then the tracks will show peak data.
 
