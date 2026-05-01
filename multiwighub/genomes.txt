@@ -1,2 +1,0 @@
-genome 	GCF_000002415.2
-trackDb GCF_000002415.2/trackDb.txt
