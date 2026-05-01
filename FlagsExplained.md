@@ -4,159 +4,163 @@
 
 ## rule fasterq_dump:
 
--p
+-p creates directory if not existing, prevents error if does exist
 
--O
+-O specifies output
 
--- split-files
+-- split-files indicates paired end file type 
 
 ## rule fasterq_dump_single:
 
--p
+-p creates directory if not existing, prevents error if does exist
 
--O
+-O specifies output
 
 ## rule download_reference_genome:
 
--p
+-p creates directory if not existing, prevents error if does exist
 
---include
 
---filename
+--include specifies what features you would like included (GFF3 annotation features and fasta)
 
--o
+--filename specifies filename
 
--d
+-o overwrite any existing file
 
--rf
+-d specifies directory 
+
+-rf removes directories and files without prompt
 
 ## rule trimmomatic_se:
 
--p
+-p creates directory if not existing, prevents error if does exist
 
--phred33
+
+-phred33 signifies quality encoding type
 
 ## rule trimmomatic_pe:
 
--p
+-p creates directory if not existing, prevents error if does exist
 
--phred33
+-phred33 signifies quality encoding type
 
 ## rule bwa_mapping_se:
 
--p
+-p creates directory if not existing, prevents error if does exist
 
--M
 
--R
+-M short splits marked as secondary, needed for compatibility with Picard
 
--bS
+-R specifies read group 
+
+-bS output BAM and SAM
 
 ## rule bwa_mapping_pe:
 
--p
+-p creates directory if not existing, prevents error if does exist
 
--M
 
--R
+-M short splits marked as secondary, needed for compatibility with Picard
 
--bS
+-R specifies read group 
+
+-bS output BAM and SAM
 
 ## rule filter_by_phred_score_se:
 
--b
+-b output in BAM format 
 
--q
+-q set quality goal (30)
 
 ## rule filter_by_phred_score_pe:
 
--b
+-b output in BAM format 
 
--q
+-q set quality goal (30)
 
 ## sort_bam_se:
 
--o
+-o specify output 
 
 ## sort_bam_pe
 
--o
+-o specify output 
 
 ## rule macs3_se:
 
--p
+-p creates directory if not existing, prevents error if does exist
 
--f
+-f single end BAM file flag or read paired as one file
 
--t
+-t specifies the experiment file
 
--g
+-g genome size indicator
 
--q
+-q false discovery rate threshold
 
---nomodel
+--nomodel skip model building 
 
---shift
+--shift do not move reading positions from mapping coordinates
 
---extsize
+--extsize make each fragment a certain size 
 
--n
+-n makes prefix for output files 
 
---outdir
+--outdir directs to results folder 
 
 ## rule macs3_pe:
 
--p
+-p creates directory if not existing, prevents error if does exist
 
--t
+-f single end BAM file flag or read paired as one file
 
--f
+-t specifies the experiment file
 
--g
+-g genome size indicator
 
--q
+-q false discovery rate threshold
 
---nomodel
+--nomodel skip model building 
 
---shift
+--shift do not move reading positions from mapping coordinates
 
---extsize
+--extsize make each fragment a certain size 
 
--n
+-n makes prefix for output files 
 
---outdir
+--outdir directs to results folder 
 
 ## rule chrom_sizes:
 
--f1,2
+-f1,2 grab only the first two columns of the index file 
 
 ## rule bed_graph_pe:
 
--p
+-p creates directory if not existing, prevents error if does exist
 
--k1,1
+-k1,1 sorts first column alphabetically 
 
--k2,2n
+-k2,2n sorts second column numerically 
 
 
 ## rule bed_graph_se:
 
--p
+-p creates directory if not existing, prevents error if does exist
 
--k1,1
+-k1,1 sorts first column alphabetically 
 
--k2,2n
+-k2,2n sorts second column numerically 
 
 ## rule bigwig_pe:
 
--p
+-p creates directory if not existing, prevents error if does exist
 
 ## rule bigwig_se:
 
--p
+-p creates directory if not existing, prevents error if does exist
 
 ## rule cleanup
 
--rf
+-rf removes directories and files without prompt
 
 
